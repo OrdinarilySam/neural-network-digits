@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 from utils import *
+import threading
 
 mnist_train = pd.read_csv('data/mnist_train.csv')
 
@@ -98,7 +99,17 @@ def backward_propagation(X, Y, weights, biases, cache, learning_rate):
 
 
 def train(X, Y, weights, biases, epochs, batch_size, learning_rate):
+  print("starting training")
+
   m = X.shape[0]
+  progress = {"epoch": 0, "epochs": epochs}
+  stop_event = threading.Event()
+
+  # Start progress printing thread
+  progress_thread = threading.Thread(target=print_progress, args=(stop_event, progress))
+  progress_thread.start()
+
+
   for epoch in range(epochs):
     # shuffle the data
     permutation = np.random.permutation(m)
@@ -114,6 +125,20 @@ def train(X, Y, weights, biases, epochs, batch_size, learning_rate):
 
       # backward propagation
       backward_propagation(X_batch, Y_batch, weights, biases, cache, learning_rate)
+
+    # Update epoch in progress
+    progress["epoch"] = epoch + 1
+
+  # Stop progress thread
+  stop_event.set()
+  progress_thread.join()
+
+  print(f'\rEpoch {progress["epoch"]}/{progress["epochs"]}')
+  
+  A3, _ = forward_propagation(X, weights, biases)
+  loss = -np.mean(np.log(A3[np.arange(len(Y)), Y]))
+  accuracy = np.mean(np.argmax(A3, axis=1) == Y)
+  print(f'Loss: {loss:.4f}, Accuracy: {accuracy:.4f}')
 
   # save the data
   save_parameters(weights, biases)

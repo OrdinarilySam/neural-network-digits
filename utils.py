@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+import time
 
 IMAGE_HEIGHT = 28
 IMAGE_WIDTH = 28
@@ -70,3 +71,8 @@ def softmax(Z):
   return expZ / expZ.sum(axis=1, keepdims=True)
 
 
+# Function to print training progress
+def print_progress(stop_event, progress):
+  while not stop_event.is_set():
+    print(f'\rEpoch {progress["epoch"]}/{progress["epochs"]}', end="")
+    time.sleep(1)
