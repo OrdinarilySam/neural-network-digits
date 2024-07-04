@@ -15,31 +15,7 @@ X_train = mnist_train.iloc[:, 1:].values
 # each row is an image and the value saved here is the label for that image
 Y_train = mnist_train.iloc[:, 0].values
 
-IMAGE_HEIGHT = 28
-IMAGE_WIDTH = 28
-INPUT_SIZE = IMAGE_HEIGHT * IMAGE_WIDTH
-
-# 20 neurons in the first hidden layer
-# 15 neurons in the second hidden layer 
-HIDDEN_LAYER_1 = 20
-HIDDEN_LAYER_2 = 15
-OUTPUT_LAYER = 10
-
-# this creates matrices of random weights for each layer
-# the matrices are L1 x L2 where L1 is the number of neurons in the previous layer
-# scaled by 0.01 from a normal distribution
-weights = {
-  "W1": np.random.randn(INPUT_SIZE, HIDDEN_LAYER_1) * 0.01,
-  "W2": np.random.randn(HIDDEN_LAYER_1, HIDDEN_LAYER_2) * 0.01,
-  "W3": np.random.randn(HIDDEN_LAYER_2, OUTPUT_LAYER) * 0.01
-}
-
-# this creates arrays (or 1d matrices) of zeros for each layer
-biases = {
-  "b1": np.zeros((1, HIDDEN_LAYER_1)),
-  "b2": np.zeros((1, HIDDEN_LAYER_2)),
-  "b3": np.zeros((1, OUTPUT_LAYER))
-}
+load_parameters()
 
 # forward propagation steps forwards through the network
 # X is the input data
@@ -120,3 +96,27 @@ def backward_propagation(X, Y, weights, biases, cache, learning_rate):
   weights['W3'] -= learning_rate * dW3
   biases['b3'] -= learning_rate * db3
 
+
+def train(X, Y, weights, biases, epochs, batch_size, learning_rate):
+  m = X.shape[0]
+  for epoch in range(epochs):
+    # forward propagation
+    A3, cache = forward_propagation(X, weights, biases)
+
+    # shuffle the data
+    permutation = np.random.permutation(m)
+    X_shuffled = X[permutation]
+    Y_shuffled = Y[permutation]
+
+    for i in range(0, m, batch_size):
+      X_batch = X_shuffled[i:i+batch_size]
+      Y_batch = Y_shuffled[i:i+batch_size]
+
+      # forward propagation
+      A3, cache = forward_propagation(X_batch, weights, biases)
+
+      # backward propagation
+      backward_propagation(X_batch, Y_batch, cache, weights, biases, learning_rate)
+
+  # save the data
+  save_parameters(weights, biases)
