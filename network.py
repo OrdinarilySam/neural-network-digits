@@ -1,5 +1,7 @@
 import numpy as np
+import os
 import pandas as pd
+from utils import *
 
 mnist_train = pd.read_csv('data/mnist_train.csv')
 
@@ -39,26 +41,6 @@ biases = {
   "b3": np.zeros((1, OUTPUT_LAYER))
 }
 
-
-# using the ReLU activation function
-# which is just sets all negative values to 0
-def relu(Z):
-  return np.maximum(0, Z)
-
-
-# the softmax activation function
-# it scales the output so that the sum of the output is 1
-# and all the values are probabilites 0-1
-# e is used to ensure that even negative values become positive
-def softmax(Z):
-  # subtracting the max value from Z prevents overflow
-  # as we are forcing all the numbers to be negative
-  # and a negative exponent makes the value smaller
-  expZ = np.exp(Z - np.max(Z, axis=1, keepdims=True))
-  # then divide by the sum of the exponents to normalize the values
-  return expZ / expZ.sum(axis=1, keepdims=True)
-
-
 # forward propagation steps forwards through the network
 # X is the input data
 def forward_propagation(X, weights, biases):
@@ -82,12 +64,6 @@ def forward_propagation(X, weights, biases):
   cache = (Z1, A1, Z2, A2, Z3, A3)
   # and then return the final output and the cache
   return A3, cache
-
-
-# the derivative of the ReLU function is just
-# 1 for positive values and 0 for negative values
-def relu_derivative(Z):
-  return Z > 0
 
 
 def backward_propagation(X, Y, weights, biases, cache, learning_rate):
