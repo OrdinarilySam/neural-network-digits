@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-mnist_train = pd.read_csv('mnist_train.csv')
+mnist_train = pd.read_csv('data/mnist_train.csv')
 
 # x are the specific pixels of the images
 # this takes all the rows and all the columns except for the first one
