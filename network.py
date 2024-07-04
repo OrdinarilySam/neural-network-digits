@@ -15,7 +15,7 @@ X_train = mnist_train.iloc[:, 1:].values
 # each row is an image and the value saved here is the label for that image
 Y_train = mnist_train.iloc[:, 0].values
 
-load_parameters()
+weights, biases = load_parameters()
 
 # forward propagation steps forwards through the network
 # X is the input data
@@ -100,9 +100,6 @@ def backward_propagation(X, Y, weights, biases, cache, learning_rate):
 def train(X, Y, weights, biases, epochs, batch_size, learning_rate):
   m = X.shape[0]
   for epoch in range(epochs):
-    # forward propagation
-    A3, cache = forward_propagation(X, weights, biases)
-
     # shuffle the data
     permutation = np.random.permutation(m)
     X_shuffled = X[permutation]
@@ -116,7 +113,7 @@ def train(X, Y, weights, biases, epochs, batch_size, learning_rate):
       A3, cache = forward_propagation(X_batch, weights, biases)
 
       # backward propagation
-      backward_propagation(X_batch, Y_batch, cache, weights, biases, learning_rate)
+      backward_propagation(X_batch, Y_batch, weights, biases, cache, learning_rate)
 
   # save the data
   save_parameters(weights, biases)
