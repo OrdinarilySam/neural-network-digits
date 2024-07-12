@@ -3,47 +3,11 @@ import pandas as pd
 import os
 import time
 
-IMAGE_HEIGHT = 28
-IMAGE_WIDTH = 28
-INPUT_SIZE = IMAGE_HEIGHT * IMAGE_WIDTH
 
-# 20 neurons in the first hidden layer
-# 15 neurons in the second hidden layer 
-HIDDEN_LAYER_1 = 20
-HIDDEN_LAYER_2 = 15
-OUTPUT_LAYER = 10
-
-
-def save_parameters(weights, biases, weight_file='weights.npy', bias_file='biases.npy'):
-  np.save(f'data/{weight_file}', weights)
-  np.save(f'data/{bias_file}', biases)
-
-
-def load_parameters(weight_file='weights.npy', bias_file='biases.npy'):
-  path_weights = f'data/{weight_file}'
-  path_biases = f'data/{bias_file}'
-
-  if not os.path.exists(path_weights) or not os.path.exists(path_biases):
-    # this creates matrices of random weights for each layer
-    # the matrices are L1 x L2 where L1 is the number of neurons in the previous layer
-    # scaled by 0.01 from a normal distribution
-    weights = {
-      "W1": np.random.randn(INPUT_SIZE, HIDDEN_LAYER_1) * 0.01,
-      "W2": np.random.randn(HIDDEN_LAYER_1, HIDDEN_LAYER_2) * 0.01,
-      "W3": np.random.randn(HIDDEN_LAYER_2, OUTPUT_LAYER) * 0.01
-    }
-
-    # this creates arrays (or 1d matrices) of zeros for each layer
-    biases = {
-      "b1": np.zeros((1, HIDDEN_LAYER_1)),
-      "b2": np.zeros((1, HIDDEN_LAYER_2)),
-      "b3": np.zeros((1, OUTPUT_LAYER))
-    }
-  else:
-    weights = np.load(f'data/{weight_file}', allow_pickle=True).item()
-    biases = np.load(f'data/{bias_file}', allow_pickle=True).item()
-
-  return weights, biases
+# using the ReLU activation function
+# which is just sets all negative values to 0
+def relu(Z):
+  return np.maximum(0, Z)
 
 
 # the derivative of the ReLU function is just
@@ -52,10 +16,12 @@ def relu_derivative(Z):
   return Z > 0
 
 
-# using the ReLU activation function
-# which is just sets all negative values to 0
-def relu(Z):
-  return np.maximum(0, Z)
+def sigmoid(Z):
+  ...
+
+
+def sigmoid_derivative(Z):
+  ...
 
 
 # the softmax activation function
